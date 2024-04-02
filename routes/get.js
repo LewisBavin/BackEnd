@@ -2,7 +2,16 @@ const express = require("express");
 const router = express.Router();
 const sha256 = require("sha256");
 
+router.get("/", (req, res) => {
+  res.send(req.users);
+});
 
+router.post("/auth", (req, res) => {
+  let { username, password } = req.body;
+  let users = req.users;
+  let user = users.filter((u) => u.username === username)[0];
+  console.log(user);
+});
 
 router.get("/:username/:password", (req, res) => {
   let { username, password } = req.params;
@@ -16,7 +25,7 @@ router.get("/:username/:password", (req, res) => {
           status: 1,
           msg: "Incorrect password, please check details",
         }
-      : {user: user}
+      : { user: user }
   );
 });
 
