@@ -2,8 +2,15 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const sha256 = require("sha256");
-const { salt } = require("./salt");
+const { salt } = require("./secrets");
 app.use(cors()); //slides in a few weeks about this
+
+const passport = require("passport");
+const session = require("express-session");
+
+app.use(session({ secret: salt }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 //users state
 const users = [
@@ -21,7 +28,7 @@ app.use(express.json());
 app.use(function (req, res, next) {
   req.users = users;
   req.lastUserId = lastUserId;
-  req.saltify = function (password){
+  req.saltify = function (password) {
     return sha256(password + salt);
   };
   next();
