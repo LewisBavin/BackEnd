@@ -32,7 +32,7 @@ app.use("/user/add", require("./routes/add"));
 app.use("/user/delete", require("./routes/delete"));
 app.use("/user/update", require("./routes/update")); */
 
-app.use("/auth", require("./routes/get"));
+app.use("/auth", require("./routes/auth"));
 app.use("/signUp", require("./routes/add"));
 
 const PORT = process.env.PORT || 6002;
