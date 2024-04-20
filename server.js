@@ -5,14 +5,7 @@ const sha256 = require("sha256");
 const { salt } = require("./secrets");
 app.use(cors()); //slides in a few weeks about this
 
-const passport = require("passport");
-const session = require("express-session");
-
-app.use(session({ secret: salt }));
-app.use(passport.initialize());
-app.use(passport.session());
-
-//users state
+//users statecle
 const users = [
   {
     email: "test@outlook.com",
@@ -33,14 +26,8 @@ app.use(function (req, res, next) {
   };
   next();
 });
-/* 
-app.use("/user/get", require("./routes/get"));
-app.use("/user/add", require("./routes/add"));
-app.use("/user/delete", require("./routes/delete"));
-app.use("/user/update", require("./routes/update")); */
 
-app.use("/auth", require("./routes/auth"));
-app.use("/signUp", require("./routes/add"));
+app.use("/user/add", require("./routes/addUser"));
 
 const PORT = process.env.PORT || 6002;
 app.listen(PORT, () => {
