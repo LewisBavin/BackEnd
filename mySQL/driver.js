@@ -12,9 +12,9 @@ con.connect((err) => {
   console.log("Connected!");
 });
 
-function promiseSQL(query) {
+function promiseSQL(query, params) {
   return new Promise((resolve, reject) => {
-    con.query(query, (err, res) => {
+    con.query(query, params,  (err, res) => {
       if (err) {
         reject(err);
         return;

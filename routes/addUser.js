@@ -14,9 +14,13 @@ router.post("/", async (req, res) => {
   try {
     let result = await promiseSQL(addUser(name, email, password));
     await promiseSQL(addSessionToken(result.insertId, token));
-    res.send({ status: 1, debug: result });
+    res.send({
+      status: 1,
+      msg: name + " successfully added!",
+      debug: result,
+    });
   } catch (e) {
-    res.send({ status: 0, debug: e });
+    res.send({ status: 0, msg: "Error adding " + name, debug: e });
   }
 });
 

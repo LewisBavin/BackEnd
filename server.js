@@ -3,31 +3,26 @@ const app = express();
 const cors = require("cors");
 const sha256 = require("sha256");
 const { salt } = require("./secrets");
-app.use(cors()); //slides in a few weeks about this
+const cookieParser = require("cookie-parser");
+const { rateLimit } = require("express-rate-limit");
 
-//users statecle
-const users = [
-  {
-    email: "test@outlook.com",
-    id: 0,
-    username: "test",
-    password: sha256("password" + salt),
-  },
-];
-let lastUserId = { value: 1000 };
+//rate limiter
+const limiterConfig = rateLimit({
+  windowMs: 10000, // 15 minutes
+  limit: 500, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  //standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  //legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+  // store: ... , // Redis, Memcached, etc. See below.
+});
+app.use(limiterConfig);
+
+app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 
-//middleware that adds the users array to the request
-app.use(function (req, res, next) {
-  req.users = users;
-  req.lastUserId = lastUserId;
-  req.saltify = function (password) {
-    return sha256(password + salt);
-  };
-  next();
-});
-
 app.use("/user/add", require("./routes/addUser"));
+app.use("/user/login", require("./routes/login"));
+app.use("/user/logout", require("./routes/logout"));
 
 const PORT = process.env.PORT || 6002;
 app.listen(PORT, () => {

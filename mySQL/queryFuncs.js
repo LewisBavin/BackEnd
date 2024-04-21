@@ -19,6 +19,11 @@ function updateUser(key, value, token) {
                             WHERE sessions.token LIKE "${token}";`;
 }
 
+function deleteAll(table, key, val) {
+  return `DELETE FROM ${table}
+            WHERE ${key} LIKE ${val};`;
+}
+
 function addSessionToken(userId, token) {
   return `INSERT INTO sessions
               (user_id, token)
@@ -38,6 +43,12 @@ function deleteSessionToken(token) {
                       WHERE token LIKE "${token}";`;
 }
 
+function authEmailPassowrd() {
+  return `SELECT *  FROM users
+            WHERE email LIKE ?
+                AND password LIKE?;`;
+}
+
 module.exports = {
   addUser,
   getUser,
@@ -45,4 +56,6 @@ module.exports = {
   addSessionToken,
   checkSessionToken,
   deleteSessionToken,
+  deleteAll,
+  authEmailPassowrd,
 };
