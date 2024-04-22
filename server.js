@@ -24,6 +24,10 @@ app.use("/user/add", require("./routes/addUser"));
 app.use("/user/login", require("./routes/login"));
 app.use("/user/logout", require("./routes/logout"));
 
+app.use("/user/get", require("./routes/get"));
+app.use("/user/addRequest", require("./routes/addRequest"))
+
+
 const PORT = process.env.PORT || 6002;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

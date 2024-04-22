@@ -10,7 +10,7 @@ router.delete("/this", verifyUser, async (req, res) => {
 });
 
 router.delete("/all", verifyUser, async (req, res) => {
-  await promiseSQL(deleteAll("sessions", "user_id", req.body.userID));
+  await promiseSQL(deleteAll("sessions", "user_id", req.body.user_id));
   res.send({ status: 1 });
 });
 

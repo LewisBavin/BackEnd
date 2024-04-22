@@ -12,6 +12,12 @@ function getUser(token) {
                         WHERE token LIKE "${token}";`;
 }
 
+function getTradingData(token, table){
+  return `SELECT * 
+            FROM ${table} 
+              JOIN ${table} ON ${table}.user_id = sessions.user_id`
+}
+
 function updateUser(key, value, token) {
   return `UPDATE users
                     JOIN sessions ON users.id = sessions.user_id

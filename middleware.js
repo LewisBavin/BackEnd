@@ -4,7 +4,7 @@ const {checkSessionToken} = require("./mySQL/queryFuncs");
 async function verifyUser(req, res, next) {
   let results = await promiseSQL(checkSessionToken(req.headers.token));
   if (results.length) {
-    req.body.userID = results[0].id
+    req.body.user_id = results[0].id
     next();
     return;
   }
