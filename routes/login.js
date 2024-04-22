@@ -4,7 +4,7 @@ const sha256 = require("sha256");
 const { randomString } = require("../utils");
 const salt = require("../secrets");
 const promiseSQL = require("../mySQL/driver");
-const { authEmailPassowrd, addSessionToken } = require("../mySQL/queryFuncs");
+const { authEmailPassowrd, addSessionToken, getUser } = require("../mySQL/queryFuncs");
 
 router.post("/", async (req, res) => {
   let { email, password } = req.body;
@@ -13,7 +13,9 @@ router.post("/", async (req, res) => {
   if (results.length === 1) {
     let token = randomString(20);
     await promiseSQL(addSessionToken(results[0].id, token));
-    res.send({ status: 1, token, debug: "fuck" });
+    let user = await promiseSQL(getUser(token));
+
+    res.send({ status: 1, user: user[0] });
     return;
   }
   res.send({
