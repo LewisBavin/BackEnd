@@ -13,5 +13,6 @@ router.delete("/all", verifyUser, async (req, res) => {
   await promiseSQL(deleteAll("sessions", "user_id", req.body.user_id));
   res.send({ status: 1 });
 });
+console.log("hi")
 
 module.exports = router;
