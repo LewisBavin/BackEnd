@@ -15,6 +15,7 @@ router.post("/", async (req, res) => {
     await promiseSQL(addSessionToken(results[0].id, token));
     let user = await promiseSQL(getUser(token));
 
+    
     res.send({ status: 1, user: user[0] });
     return;
   }
