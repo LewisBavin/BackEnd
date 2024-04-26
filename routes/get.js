@@ -5,7 +5,6 @@ const { getUser } = require("../mySQL/queryFuncs");
 const { verifyUser } = require("../middleware");
 
 router.get("/users", verifyUser, async (req, res) => {
-  console.log("headers", req.headers);
   let users = await promiseSQL(
     `SELECT * FROM users WHERE
       id <> ${req.body.user_id};`
