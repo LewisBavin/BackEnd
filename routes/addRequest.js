@@ -6,8 +6,13 @@ const { verifyUser } = require("../middleware");
 
 router.post("/", verifyUser, async (req, res) => {
   let values = "";
-  let user_id = req.body.user_id;
-  req.body.forEach((request) => {
+  let { user_id, requests } = req.body;
+
+  if (!requests) {
+    res.send({ status: 0, err: "Bad Request Data Received" });
+    return;
+  }
+  for (let i = 0; i < requests.length; i++) {
     let {
       counter_id,
       direction,
@@ -16,7 +21,8 @@ router.post("/", verifyUser, async (req, res) => {
       volume,
       total_volume,
       price,
-    } = request;
+    } = requests[i];
+    i ? (values += `, `) : null;
     values += `(NULL,
       ${user_id},
       ${counter_id},
@@ -26,10 +32,8 @@ router.post("/", verifyUser, async (req, res) => {
       ${volume}, 
       ${total_volume}, 
       ${price}, 
-    current_timestamp()),`;
-  });
-  console.log(values)
-  return;
+    current_timestamp())`;
+  }
 
   try {
     let results = await promiseSQL(
@@ -38,9 +42,12 @@ router.post("/", verifyUser, async (req, res) => {
             VALUES 
                 ${values};`
     );
-    res.send({ staus: 1, results });
+    res.send({ status: 1 });
   } catch (err) {
-    res.send({ status: 0, err });
+    res.send({
+      status: 0,
+      err: "Error uploading request data. Please contact administrators",
+    });
   }
 });
 
