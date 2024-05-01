@@ -17,16 +17,15 @@ router.get("/users", verifyUser, async (req, res) => {
 
 router.get("/requests", verifyUser, async (req, res) => {
   let { start_date, end_date } = req.headers;
-  console.log(start_date, end_date);
 
   let inputs = await promiseSQL(
     `SELECT *
       FROM requests 
         WHERE 
-          (user_id = ${req.body.user_id} AND direction = "B" AND
+          (rejected = 0 AND user_id = ${req.body.user_id} AND direction = "B" AND
             (start_date >= "${start_date}" AND start_date <= "${end_date}"))
           OR
-          (counter_id = ${req.body.user_id} AND direction = "S" AND
+          (rejected = 0 AND counter_id = ${req.body.user_id} AND direction = "S" AND
             (start_date >= "${start_date}" AND start_date <= "${end_date}"))
     ;`
   );
@@ -34,10 +33,10 @@ router.get("/requests", verifyUser, async (req, res) => {
     `SELECT *
     FROM requests 
       WHERE 
-        (user_id = ${req.body.user_id} AND direction = "S" AND
+        (rejected = 0 AND user_id = ${req.body.user_id} AND direction = "S" AND
           (start_date >= "${start_date}" AND start_date <= "${end_date}"))
         OR
-        (counter_id = ${req.body.user_id} AND direction = "B" AND
+        (rejected = 0 AND counter_id = ${req.body.user_id} AND direction = "B" AND
           (start_date >= "${start_date}" AND start_date <= "${end_date}"))
   ;`
   );
