@@ -139,6 +139,13 @@ router.post("/accept", verifyUser, async (req, res) => {
   
 });
 
+router.post("/test", verifyUser, async (req, res) => {
+  let { submits } = req.body;
+  console.log(submits)
+  
+});
+
+
 /* UPDATE requests
 	SET volume = 
     	CASE

@@ -20,7 +20,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
-app.use("/user/add", require("./routes/addUser"));
+app.use("/signUp", require("./routes/addUser"));
 app.use("/user/login", require("./routes/login"));
 app.use("/user/logout", require("./routes/logout"));
 

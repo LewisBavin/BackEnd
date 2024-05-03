@@ -5,6 +5,7 @@ const { deleteSessionToken, deleteAll } = require("../mySQL/queryFuncs");
 const { verifyUser } = require("../middleware");
 
 router.delete("/this", verifyUser, async (req, res) => {
+  console.log("logout")
   await promiseSQL(deleteSessionToken(req.headers.token));
   res.send({ status: 1, token: req.headers.token });
 });
