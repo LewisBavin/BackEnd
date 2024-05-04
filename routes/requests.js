@@ -42,7 +42,7 @@ router.post("/add", verifyUser, async (req, res) => {
             VALUES 
                 ${values};`
     );
-    res.send({ status: 1 });
+    res.send({ status: 1, results });
   } catch (err) {
     res.send({
       status: 0,
@@ -66,11 +66,10 @@ router.post("/remove", verifyUser, async (req, res) => {
   values += "0)";
 
   let sqlString = `DELETE FROM requests WHERE id IN ${values};`;
-  console.log(sqlString);
 
   try {
     let results = await promiseSQL(sqlString);
-    res.send({ status: 1 });
+    res.send({ status: 1, results });
   } catch (err) {
     res.send({
       status: 0,
@@ -144,17 +143,5 @@ router.post("/test", verifyUser, async (req, res) => {
   console.log(submits)
   
 });
-
-
-/* UPDATE requests
-	SET volume = 
-    	CASE
-        	WHEN id = 88 then 500
-        END
-        , total_volume = 
-        CASE 
-        	WHEN id = 88 then 500
-        END    
-     WHERE id iN (88); */
 
 module.exports = router;

@@ -22,10 +22,10 @@ router.get("/requests", verifyUser, async (req, res) => {
     `SELECT *
       FROM requests 
         WHERE 
-          (rejected = 0 AND user_id = ${req.body.user_id} AND direction = "B" AND
+          (rejected = 0 AND user_id = ${req.body.user_id} AND direction = "B" AND timeout = 0 AND
             (start_date >= "${start_date}" AND start_date <= "${end_date}"))
           OR
-          (rejected = 0 AND counter_id = ${req.body.user_id} AND direction = "S" AND
+          (rejected = 0 AND counter_id = ${req.body.user_id} AND direction = "S" AND timeout = 0 AND
             (start_date >= "${start_date}" AND start_date <= "${end_date}"))
     ;`
   );
@@ -33,10 +33,10 @@ router.get("/requests", verifyUser, async (req, res) => {
     `SELECT *
     FROM requests 
       WHERE 
-        (rejected = 0 AND user_id = ${req.body.user_id} AND direction = "S" AND
+        (rejected = 0 AND user_id = ${req.body.user_id} AND direction = "S" AND timeout = 0 AND
           (start_date >= "${start_date}" AND start_date <= "${end_date}"))
         OR
-        (rejected = 0 AND counter_id = ${req.body.user_id} AND direction = "B" AND
+        (rejected = 0 AND counter_id = ${req.body.user_id} AND direction = "B" AND timeout = 0 AND
           (start_date >= "${start_date}" AND start_date <= "${end_date}"))
   ;`
   );
