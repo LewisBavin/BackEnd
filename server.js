@@ -25,8 +25,7 @@ app.use("/user/login", require("./routes/login"));
 app.use("/user/logout", require("./routes/logout"));
 
 app.use("/user/get", require("./routes/get"));
-app.use("/user/requests", require("./routes/requests"))
-
+app.use("/user/requests", require("./routes/requests"));
 
 const PORT = process.env.PORT || 6002;
 app.listen(PORT, () => {
