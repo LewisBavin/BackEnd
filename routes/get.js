@@ -15,17 +15,17 @@ router.get("/users", verifyUser, async (req, res) => {
   res.send({ status: 1, users });
 });
 
-router.get("/requests", verifyUser, async (req, res) => {
+router.get("/requests/pending", verifyUser, async (req, res) => {
   let { start_date, end_date } = req.headers;
 
   let inputs = await promiseSQL(
     `SELECT *
       FROM requests 
         WHERE 
-          (rejected = 0 AND user_id = ${req.body.user_id} AND direction = "B" AND timeout = 0 AND
+          (pending = 1 AND user_id = ${req.body.user_id} AND direction = "B" AND timeout = 0 AND
             (start_date >= "${start_date}" AND start_date <= "${end_date}"))
           OR
-          (rejected = 0 AND counter_id = ${req.body.user_id} AND direction = "S" AND timeout = 0 AND
+          (pending = 1 AND counter_id = ${req.body.user_id} AND direction = "S" AND timeout = 0 AND
             (start_date >= "${start_date}" AND start_date <= "${end_date}"))
     ;`
   );
@@ -33,18 +33,37 @@ router.get("/requests", verifyUser, async (req, res) => {
     `SELECT *
     FROM requests 
       WHERE 
-        (rejected = 0 AND user_id = ${req.body.user_id} AND direction = "S" AND timeout = 0 AND
+        (pending  = 1 AND user_id = ${req.body.user_id} AND direction = "S" AND timeout = 0 AND
           (start_date >= "${start_date}" AND start_date <= "${end_date}"))
         OR
-        (rejected = 0 AND counter_id = ${req.body.user_id} AND direction = "B" AND timeout = 0 AND
+        (pending = 1 AND counter_id = ${req.body.user_id} AND direction = "B" AND timeout = 0 AND
           (start_date >= "${start_date}" AND start_date <= "${end_date}"))
   ;`
   );
   res.send({ status: 1, inputs, outputs });
 });
 
-router.get("/:id/allocations", verifyUser, async (req, res) => {
-  let results;
-});
+router.get("/matched", verifyUser, async (req, res) =>{
+  let { start_date, end_date } = req.headers;
+
+  let matched = await promiseSQL(
+    `SELECT *
+      FROM requests 
+        WHERE 
+          (accepted = 1 AND 
+          start_date >= "${start_date}" AND 
+          start_date <= "${end_date}" AND
+          user_id = ${req.body.user_id})
+            
+          OR
+          (accepted = 1 AND 
+            start_date >= "${start_date}" AND 
+            start_date <= "${end_date}" AND
+            counter_id = ${req.body.user_id})
+    ;`
+  );
+  res.send({ status: 1, matched });
+})
+
 
 module.exports = router;
