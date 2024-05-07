@@ -43,7 +43,7 @@ router.get("/requests/pending", verifyUser, async (req, res) => {
   res.send({ status: 1, inputs, outputs });
 });
 
-router.get("/matched", verifyUser, async (req, res) =>{
+router.get("/matched", verifyUser, async (req, res) => {
   let { start_date, end_date } = req.headers;
 
   let matched = await promiseSQL(
@@ -62,8 +62,13 @@ router.get("/matched", verifyUser, async (req, res) =>{
             counter_id = ${req.body.user_id})
     ;`
   );
+  let disputes = await promiseSQL(`SELECT * FROM disputes`);
+  matched.forEach((m) =>
+    disputes.forEach((d) => {
+      m.id == d.trade_id ? (m.disputed = true) : null;
+    })
+  );
   res.send({ status: 1, matched });
-})
-
+});
 
 module.exports = router;
