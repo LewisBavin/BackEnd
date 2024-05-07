@@ -44,7 +44,6 @@ router.post("/add", verifyUser, async (req, res) => {
     );
     res.send({ status: 1, results });
   } catch (err) {
-    console.log(err);
     res.send({
       status: 0,
       err: "Error uploading request data. Please contact administrators",
@@ -163,14 +162,12 @@ router.post("/raiseDispute", verifyUser, async (req, res) => {
     try {
       let response = await promiseSQL(
         `INSERT INTO disputes
-          (trade_id, user_id, counter_id, comment, user_agreed, counter_agreed)
+          (trade_id, dispute_user_id, dispute_counter_id, comment, user_agreed, counter_agreed)
             VALUES 
                 ${values};`
       );
       res.send({ status: 1, response });
     } catch (err) {
-      console.log(err)
-      console.log(user_id)
       res.send({
         status: 0,
         err: "Error uploading disputes. Please contact administrators",

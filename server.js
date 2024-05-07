@@ -1,8 +1,6 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const sha256 = require("sha256");
-const { salt } = require("./secrets");
 const cookieParser = require("cookie-parser");
 const { rateLimit } = require("express-rate-limit");
 
