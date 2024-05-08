@@ -156,7 +156,9 @@ router.post("/raiseDispute", verifyUser, async (req, res) => {
     for (let i = 0; i < disputes.length; i++) {
       let d = disputes[i];
       i ? (values += `, `) : null;
-      values += `(${d.id}, ${user_id}, ${d.counter_id == user_id ? d.user_id : d.counter_id}, "${d.comment}", 1, 0)`;
+      values += `(${d.id}, ${user_id}, ${
+        d.counter_id == user_id ? d.user_id : d.counter_id
+      }, "${d.comment}", 1, 0)`;
     }
 
     try {
@@ -172,6 +174,45 @@ router.post("/raiseDispute", verifyUser, async (req, res) => {
         status: 0,
         err: "Error uploading disputes. Please contact administrators",
       });
+    }
+  }
+});
+
+router.post("/rejectDispute", verifyUser, async (req, res) => {
+  let { trade } = req.body;
+
+  if (!trade) {
+    res.send({ status: 0, err: "No Data received to the server" });
+  } else {
+    let sqlString = `UPDATE disputes 
+                      SET counter_rejected = 1,
+                        reject_comment = ${trade.reject_comment}
+                      WHERE 
+                        trade_id = ${trade.trade_id};`;
+    try {
+      let response = await promiseSQL(sqlString);
+      res.send({ status: 1, response });
+    } catch (err) {
+      res.send({ status: 0, err: "error" });
+    }
+  }
+});
+
+router.post("/acceptDispute", verifyUser, async (req, res) => {
+  let { trade } = req.body;
+
+  if (!trade) {
+    res.send({ status: 0, err: "No Data received to the server" });
+  } else {
+    let sqlString = `DELETE FROM requests
+                      WHERE 
+                        id = ${trade.trade_id};
+                        `;
+    try {
+      let response = await promiseSQL(sqlString);
+      res.send({ status: 1, response });
+    } catch (err) {
+      res.send({ status: 0, err });
     }
   }
 });
