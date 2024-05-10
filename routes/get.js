@@ -95,4 +95,26 @@ router.get("/disputes", verifyUser, async (req, res) => {
   res.send({ status: 1, disputes });
 });
 
+router.get("/nominations", verifyUser, async(req, res)=>{
+  let { start_date, end_date } = req.headers;
+  let { user_id } = req.body;
+
+  let disputes = await promiseSQL(`
+    SELECT *
+      FROM requests r
+        JOIN disputes d
+          ON  (r.id = d.trade_id AND
+              r.start_date BETWEEN "${start_date}" AND "${end_date}")
+                  OR
+              (r.id = d.trade_id AND
+              r.end_date BETWEEN "${start_date}" AND "${end_date}")
+      WHERE
+      (d.dispute_user_id = ${user_id})
+        OR
+      (d.dispute_counter_id = ${user_id});  
+  `);
+
+  res.send({ status: 1, disputes });
+})
+
 module.exports = router;
