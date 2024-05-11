@@ -123,7 +123,7 @@ router.get("/nominations", verifyUser, async (req, res) => {
 
     res.send({ status: 1, results });
   } catch (e) {
-    console.log(e)
+    console.log(e);
     res.send({ status: 0, err: e });
   }
 });
