@@ -34,8 +34,8 @@ con &&
   }
 })();
 
-let a = [1,2,3]
-console.log(a[-1])
+let a = [1, 2, 3];
+console.log(a[-1]);
 
 function promiseSQL(query, params) {
   return new Promise((resolve, reject) => {
