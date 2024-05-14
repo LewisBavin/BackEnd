@@ -43,6 +43,42 @@ router.get("/requests/pending", verifyUser, async (req, res) => {
   res.send({ status: 1, inputs, outputs });
 });
 
+router.get("/requests/valid", verifyUser, async (req, res) => {
+  let { start_date, end_date } = req.headers;
+  console.log(req.body.user_id, start_date, end_date);
+
+  let trades = await promiseSQL(
+    `SELECT *
+      FROM requests 
+        WHERE 
+          (timeout = 0 AND rejected = 0  AND user_id = ${req.body.user_id} AND
+            ("${start_date}" BETWEEN start_date AND end_date))
+    ;`
+  );
+  let transputs = await promiseSQL(`
+  SELECT *
+    FROM nominations
+      WHERE
+        (timestamp = 
+          (
+             SELECT MAX(timestamp) FROM nominations 
+               WHERE 
+                 user_id = ${req.body.user_id} AND "${start_date}" BETWEEN start_date AND end_date AND transput = "I"
+           )
+         ) OR
+ 
+         (timestamp = 
+           (
+              SELECT MAX(timestamp) FROM nominations 
+                WHERE 
+                  user_id = ${req.body.user_id} AND "${end_date}" BETWEEN start_date AND end_date AND transput = "O"
+            )
+          )
+              ;`);
+
+  res.send({ status: 1, trades, transputs });
+});
+
 router.get("/matched", verifyUser, async (req, res) => {
   let { start_date, end_date } = req.headers;
 
