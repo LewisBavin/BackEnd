@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
   try {
     let result = await promiseSQL(addUser(name, email, password));
     await promiseSQL(addSessionToken(result.insertId, token));
-    let user = await promiseSQL(getUser(token))
+    let user = await promiseSQL(getUser(token));
     res.send({
       status: 1,
       returnMsg: name + " successfully added!",
@@ -23,8 +23,12 @@ router.post("/", async (req, res) => {
   } catch (e) {
     let returnErr = {};
     let sqlMsg = e.sqlMessage;
-    returnErr.email = sqlMsg.includes("email") ? "eMail already registered!" : ""
-    returnErr.name = sqlMsg.includes("name") ? "Username already registered!" : ""
+    returnErr.email = sqlMsg.includes("email")
+      ? "eMail already registered!"
+      : "";
+    returnErr.name = sqlMsg.includes("name")
+      ? "Username already registered!"
+      : "";
     res.send({ status: 0, errCode: e.code, returnErr });
   }
 });

@@ -186,13 +186,14 @@ router.post("/rejectDispute", verifyUser, async (req, res) => {
   } else {
     let sqlString = `UPDATE disputes 
                       SET counter_rejected = 1,
-                        reject_comment = ${trade.reject_comment}
+                        reject_comment = "${trade.reject_comment}"
                       WHERE 
                         trade_id = ${trade.trade_id};`;
     try {
       let response = await promiseSQL(sqlString);
       res.send({ status: 1, response });
     } catch (err) {
+      console.log(err)
       res.send({ status: 0, err: "error" });
     }
   }

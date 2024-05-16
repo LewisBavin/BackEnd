@@ -5,7 +5,7 @@ const { verifyUser } = require("../middleware");
 
 router.post("/add", verifyUser, async (req, res) => {
   let { user_id, transputs } = req.body;
-  console.log(req.body)
+
 
   if (!transputs) {
     res.send({ status: 0, err: "Bad Nomination Data Received" });
@@ -25,7 +25,7 @@ router.post("/add", verifyUser, async (req, res) => {
       let results = await promiseSQL(sqlString);
       res.send({ status: 1, results });
     } catch (e) {
-      console.log(e);
+
       res.send({ status: 0, err: e });
     }
   }

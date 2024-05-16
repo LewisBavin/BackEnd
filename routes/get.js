@@ -45,7 +45,6 @@ router.get("/requests/pending", verifyUser, async (req, res) => {
 
 router.get("/requests/valid", verifyUser, async (req, res) => {
   let { start_date, end_date } = req.headers;
-  console.log(req.body.user_id, start_date, end_date);
 
   let trades = await promiseSQL(
     `SELECT *
@@ -159,7 +158,7 @@ router.get("/nominations", verifyUser, async (req, res) => {
 
     res.send({ status: 1, results });
   } catch (e) {
-    console.log(e);
+
     res.send({ status: 0, err: e });
   }
 });
