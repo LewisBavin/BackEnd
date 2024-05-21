@@ -18,28 +18,29 @@ router.get("/users", verifyUser, async (req, res) => {
 router.get("/requests/pending", verifyUser, async (req, res) => {
   let { start_date, end_date } = req.headers;
 
-  let inputs = await promiseSQL(
-    `SELECT *
+  let inputs = await promiseSQL(`SELECT *
       FROM requests 
         WHERE 
-          (pending = 1 AND user_id = ${req.body.user_id} AND direction = "B" AND timeout = 0 AND
-            (start_date >= "${start_date}" AND start_date <= "${end_date}"))
+          ("${start_date}" BETWEEN start_date AND end_date OR "${end_date}" BETWEEN start_date AND end_date)
+          AND 
+          (
+            (pending = 1 AND timeout = 0 AND user_id = ${req.body.user_id} AND direction = "B") 
+              OR
+            (pending = 1 AND timeout = 0 AND counter_id = ${req.body.user_id} AND direction = "S")
+          )  
+    ;`);
+
+  let outputs = await promiseSQL(`SELECT *
+  FROM requests 
+    WHERE 
+      ("${start_date}" BETWEEN start_date AND end_date OR "${end_date}" BETWEEN start_date AND end_date)
+      AND 
+      (
+        (pending = 1 AND timeout = 0 AND user_id = ${req.body.user_id} AND direction = "S") 
           OR
-          (pending = 1 AND counter_id = ${req.body.user_id} AND direction = "S" AND timeout = 0 AND
-            (start_date >= "${start_date}" AND start_date <= "${end_date}"))
-    ;`
-  );
-  let outputs = await promiseSQL(
-    `SELECT *
-    FROM requests 
-      WHERE 
-        (pending  = 1 AND user_id = ${req.body.user_id} AND direction = "S" AND timeout = 0 AND
-          (start_date >= "${start_date}" AND start_date <= "${end_date}"))
-        OR
-        (pending = 1 AND counter_id = ${req.body.user_id} AND direction = "B" AND timeout = 0 AND
-          (start_date >= "${start_date}" AND start_date <= "${end_date}"))
-  ;`
-  );
+        (pending = 1 AND timeout = 0 AND counter_id = ${req.body.user_id} AND direction = "B")
+      )  
+;`);
   res.send({ status: 1, inputs, outputs });
 });
 
@@ -81,22 +82,19 @@ router.get("/requests/valid", verifyUser, async (req, res) => {
 router.get("/matched", verifyUser, async (req, res) => {
   let { start_date, end_date } = req.headers;
 
-  let matched = await promiseSQL(
-    `SELECT *
-      FROM requests 
-        WHERE 
-          (accepted = 1 AND 
-          start_date >= "${start_date}" AND 
-          start_date <= "${end_date}" AND
-          user_id = ${req.body.user_id})
-            
-          OR
-          (accepted = 1 AND 
-            start_date >= "${start_date}" AND 
-            start_date <= "${end_date}" AND
-            counter_id = ${req.body.user_id})
-    ;`
-  );
+  let matched = await promiseSQL(`SELECT *
+  FROM requests 
+    WHERE 
+      (accepted = 1 AND "${start_date}" BETWEEN start_date AND end_date 
+        OR 
+        accepted = 1 AND "${end_date}" BETWEEN start_date AND end_date
+      )  
+      AND 
+      (
+        user_id = ${req.body.user_id} OR counter_id = ${req.body.user_id}
+      )  
+;`);
+
   let disputes = await promiseSQL(
     `SELECT * FROM disputes WHERE user_agreed <> counter_agreed`
   );
@@ -117,10 +115,10 @@ router.get("/disputes", verifyUser, async (req, res) => {
       FROM requests r
         JOIN disputes d
           ON  (r.id = d.trade_id AND
-              r.start_date BETWEEN "${start_date}" AND "${end_date}")
+            "${start_date}" BETWEEN  r.start_date AND r.end_date)
                   OR
               (r.id = d.trade_id AND
-              r.end_date BETWEEN "${start_date}" AND "${end_date}")
+                "${end_date}" BETWEEN r.start_date AND r.end_date)
       WHERE
       (d.dispute_user_id = ${user_id})
         OR
@@ -158,7 +156,6 @@ router.get("/nominations", verifyUser, async (req, res) => {
 
     res.send({ status: 1, results });
   } catch (e) {
-
     res.send({ status: 0, err: e });
   }
 });
